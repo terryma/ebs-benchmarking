@@ -33,7 +33,7 @@ var attributes = [
     {name:'instance-type', label:'Instance Type', values:{m1small:'m1.small', m1large:'m1.large', c1xlarge:'c1.xlarge'}}, 
     {name:'file-system', label:'File System', values:{ext3:'ext3', ext4:'ext4', xfs:'xfs'}}, 
     {name:'mount-options', label:'Mount Options', values:{none:'none', noatime:'noatime'}}, 
-    {name:'storage-type', label:'Storage Type', values:{euphemeral:'euphemeral', ebs:'ebs'}},
+    {name:'storage-type', label:'Storage Type', values:{ebs:'ebs', euphemeral:'euphemeral'}},
     {name:'instance-tenancy', label:'Instance Tenancy', values:{default:'default', dedicated:'dedicated'}},
     {name:'encryption-layer', label:'Encryption Layer', values:{domU:'domU', dom0:'dom0'}}
 ];
@@ -56,5 +56,5 @@ app.post('/q', function(req, res) {
     res.send({req:req.body, file:fileName});
 });
 
-app.listen(3000);
+app.listen(8080);
 console.log("Express server listening on port %d", app.address().port);

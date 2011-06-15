@@ -6,8 +6,33 @@ html
     link(rel='stylesheet', href='/stylesheets/Aristo/jquery-ui-1.8.7.custom.css')
     script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js')
     script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js')
+    script(type='text/javascript', src='/javascripts/jquery.form.js')
     script(type='text/javascript')
         $(function() {
-            $(".buttonset").buttonset();
+            // decorate the buttons
+            $('.buttonset').buttonset();
+
+            // register the form
+            $('#form').ajaxForm(function() {
+                alert("submitted!");
+            });
+
+            var radiosArr = [];
+            // select the first element of each options
+            $('.field').each(function() {
+                var $radios = $(this).find('input:radio');
+                radiosArr.push($radios);
+            });
+            console.log(radiosArr);
+            $.each(radiosArr, function(){
+                console.log(this);
+                this.change(function(){
+                    console.log("changed!");
+                    $('#form').submit();
+                });
+                this.find('input:radio:first').attr('checked', true).trigger('change');
+            });
+
+
         });
   body!= body

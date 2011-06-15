@@ -34,7 +34,8 @@ var attributes = [
     {name:'file-system', label:'File System', values:{ext3:'ext3', ext4:'ext4', xfs:'xfs'}}, 
     {name:'mount-options', label:'Mount Options', values:{none:'none', noatime:'noatime'}}, 
     {name:'storage-type', label:'Storage Type', values:{euphemeral:'euphemeral', ebs:'ebs'}},
-    {name:'instance-tenancy', label:'Instance Tenancy', values:{default:'default', dedicated:'dedicated'}}
+    {name:'instance-tenancy', label:'Instance Tenancy', values:{default:'default', dedicated:'dedicated'}},
+    {name:'encryption-layer', label:'Encryption Layer', values:{domU:'domU', dom0:'dom0'}}
 ];
 
 app.get('/', function(req, res){

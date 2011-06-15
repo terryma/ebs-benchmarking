@@ -10,6 +10,7 @@ var app = module.exports = express.createServer();
 // Configuration
 
 app.configure(function(){
+  app.use(express.logger());
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.bodyParser());
@@ -19,21 +20,39 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-  app.use(express.logger());
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
-  app.use(express.logger());
   app.use(express.errorHandler()); 
 });
 
 // Routes
 
+var attributes = [
+    {name:'instance-type', label:'Instance Type', values:{m1small:'m1.small', m1large:'m1.large', c1xlarge:'c1.xlarge'}}, 
+    {name:'file-system', label:'File System', values:{ext3:'ext3', ext4:'ext4', xfs:'xfs'}}, 
+    {name:'mount-options', label:'Mount Options', values:{none:'none', noatime:'noatime'}}, 
+    {name:'storage-type', label:'Storage Type', values:{euphemeral:'euphemeral', ebs:'ebs'}},
+    {name:'instance-tenancy', label:'Instance Tenancy', values:{default:'default', dedicated:'dedicated'}}
+];
+
 app.get('/', function(req, res){
     res.render('index', {
-        title: 'EBS Benchmarking'
+        title: 'EBS Benchmarking',
+        attributes: attributes
     });
+});
+
+app.post('/q', function(req, res) {
+    console.log(req.body);
+    var arr = [];
+    for (var i in req.body) {
+        arr.push(req.body[i]);
+    }
+    console.log(arr);
+    var fileName = '/results/' + arr.join('-') + '.txt';
+    res.send({req:req.body, file:fileName});
 });
 
 app.listen(3000);

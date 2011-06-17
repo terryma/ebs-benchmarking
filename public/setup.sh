@@ -67,6 +67,14 @@ enc=${device}2
 # set up encrypted device
 echo "Running cryptsetup -q -d $keyfile luksFormat $enc"
 cryptsetup -q -d $keyfile luksFormat $enc
+if [ "$?" -eq "0" ]
+then
+    echo "luksFormat successfully called on device $enc"
+else
+    echo "Something is wrong, aborting..."
+    exit 1
+fi
+
 file -s $enc
 cryptsetup -d $keyfile luksOpen $enc encrypted
 

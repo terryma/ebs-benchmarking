@@ -1,43 +1,68 @@
 usage() {
-    echo "Usage: $0 {-e encrypted device} {-r raw device}"
+    echo "Usage: $0 {-d device}"
     exit 1
 }
 
-[[ $USER != "root" ]] && echo "Needs to run as root" && exit 1
+[ $USER != "root" ] && echo "Needs to run as root" && exit 1
 
 enc=""
 raw=""
-while getopts e:r: option
+device=""
+while getopts d: option
 do
     case "${option}"
     in
-        e) enc=${OPTARG};;
-        r) raw=${OPTARG};;
+        d) device=${OPTARG};;
         [?]) usage
         exit 1;;
     esac
 done
 
-[[ -z "$enc" ]] && usage
-[[ -z "$raw" ]] && usage
+[ -z "$device" ] && usage
 
 # run all as root
 # disable for now since I haven't quite figured out how to pass env variables to su
 #sudo su <<-'.'
 
-# install rpmforge if not already
+# install rpmforge if not already, since this is needed to install fio
 rpmforge=rpmforge-release-0.3.6-1.el5.rf.i386
-rpm -qa | grep $1>/dev/null $rpmforge && echo "RPM Forge already installed" || rpm -Uhv http://apt.sw.be/redhat/el5/en/i386/rpmforge/RPMS/$rpmforge.rpm
+echo "Checking RPMforge..."
+rpm -qa | grep $rpmforge > /dev/null && echo "RPMforge is already installed" || rpm -Uhv http://apt.sw.be/redhat/el5/en/i386/rpmforge/RPMS/$rpmforge.rpm
 
 # install fio if not already
-yum list installed | grep $1>/dev/null "^fio" && echo "fio is already installed" || yum install --assumeyes fio
+echo "Checking fio..."
+yum list installed | grep "^fio" > /dev/null && echo "fio is already installed" || yum install --assumeyes fio
 
-# create a key file
+# create a key file and populate it if not already exists
+echo "Checking encryption key..."
 keyfile=$HOME/.lukskey
-echo "Generating key file $keyfile"
-touch $keyfile && echo "$keyfile created"
-# silly password
-echo "apccore" > $keyfile
+if [ -e $keyfile ] 
+then
+    echo "Encryption key ($keyfile) already exists, going to use it"
+else
+    echo "Generating key file $keyfile"
+    touch $keyfile && echo "$keyfile created"
+    # silly password
+    echo "apccore" > $keyfile
+fi
+
+# unmount our stuff
+echo "Unmounting /plain and /encrypted..."
+umount /plain
+umount /encrypted
+
+# close our encrypted luks device
+echo "Closing existing LUKS device 'encrypted'"
+cryptsetup luksClose encrypted
+
+# set up two partitions, one encrypted and one raw
+echo "Setting up two 130 cylinder partitions on $device, WIPING everything on there"
+{
+    echo 0,130
+    echo ,130
+} | sfdisk $device
+raw=${device}1
+enc=${device}2
 
 # set up encrypted device
 echo "Running cryptsetup -q -d $keyfile luksFormat $enc"
@@ -55,19 +80,26 @@ mkfs.ext3 -q -m 0 $raw
 mkdir -p /plain
 mkdir -p /encrypted
 echo "Mounting /dev/mapper/encrypted on /encrypted"
-mount $1 > /dev/null 2>&1 /dev/mapper/encrypted /encrypted
+mount /dev/mapper/encrypted /encrypted > /dev/null 2>&1
 echo "Mounting $raw on /plain"
-mount $1 > /dev/null 2>&1 $raw /plain
+mount $raw /plain > /dev/null 2>&1
 
 # download the fio input file
 # grabbing from my github account for now, need to figure out better way to do this
-fiofile=https://raw.github.com/terryma/ebs-benchmarking/master/public/bench.fio
-echo "Downloading fio job file at $fiofile"
-curl -O -s $fiofile 
+fiofilename=bench.fio
+echo "Checking for fio job file" 
+if [ -e $fiofilename ] 
+then
+    echo "$fiofilename already exists, going to use it" 
+else
+    fiofile=https://raw.github.com/terryma/ebs-benchmarking/master/public/$fiofilename
+    echo "Downloading fio job file at $fiofile"
+    curl -O -s $fiofile 
+fi
 
-
-# finally run the test
+# finally run the test and save the result
 echo "Running fio test..."
+# fio bench.fio | tee test-result.txt
 fio bench.fio
 
 #.

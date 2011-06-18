@@ -3,6 +3,11 @@ usage() {
     exit 1
 }
 
+# setup
+INSTANCE_TYPE=`curl -s http://169.254.169.254/latest/meta-data/instance-type`
+INSTANCE_ID=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
+FILE_SYSTEM=ext3
+
 [ $USER != "root" ] && echo "Needs to run as root" && exit 1
 
 enc=""
@@ -48,8 +53,8 @@ fi
 
 # unmount our stuff
 echo "Unmounting /plain and /encrypted..."
-umount /plain
-umount /encrypted
+umount -l /plain
+umount -l /encrypted
 
 # close our encrypted luks device
 echo "Closing existing LUKS device 'encrypted'"
@@ -60,7 +65,7 @@ echo "Setting up two 130 cylinder partitions on $device, WIPING everything on th
 {
     echo 0,130
     echo ,130
-} | sfdisk $device
+} | sfdisk  $device
 raw=${device}1
 enc=${device}2
 
@@ -108,7 +113,10 @@ fi
 # finally run the test and save the result
 echo "Running fio test..."
 # fio bench.fio | tee test-result.txt
-fio bench.fio
+TEST_OUTPUT=${INSTANCE_TYPE}-${INSTANCE_ID}-`date +%m-%d-%y-%H:%M:%S`.out
+echo "Outputting to $TEST_OUTPUT"
+
+fio --output=$TEST_OUTPUT bench.fio
 
 #.
 

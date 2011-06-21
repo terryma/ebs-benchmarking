@@ -1,3 +1,5 @@
+# This script is ran on the instance to execute the fio tests
+
 usage() {
     echo "Usage: $0 {-d device}"
     exit 1

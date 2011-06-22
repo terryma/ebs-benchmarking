@@ -1,31 +1,34 @@
+#!/bin/sh
 # This script is ran on the instance to execute the fio tests
 
 usage() {
-    echo "Usage: $0 {-d device}"
+    echo "Usage: $0 {-d device} {-f filesystem}"
     exit 1
 }
 
 # setup
-INSTANCE_TYPE=`curl -s http://169.254.169.254/latest/meta-data/instance-type`
-INSTANCE_ID=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
-FILE_SYSTEM=ext3
+#INSTANCE_TYPE=`curl -s http://169.254.169.254/latest/meta-data/instance-type`
+#INSTANCE_ID=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
 
 [ $USER != "root" ] && echo "Needs to run as root" && exit 1
 
 enc=""
 raw=""
 device=""
-while getopts d: option
+filesystem=""
+while getopts d:f: option
 do
     case "${option}"
     in
         d) device=${OPTARG};;
+        f) filesystem=${OPTARG};;
         [?]) usage
         exit 1;;
     esac
 done
 
 [ -z "$device" ] && usage
+[ -z "$filesystem" ] && usage
 
 # run all as root
 # disable for now since I haven't quite figured out how to pass env variables to su
@@ -71,10 +74,14 @@ echo "Setting up two 130 cylinder partitions on $device, WIPING everything on th
 raw=${device}1
 enc=${device}2
 
+# sleep for 5 seconds before the next step as i've encountered race conditions previously
+echo "Sleeping for 5 seconds before calling cryptsetup..."
+sleep 5
+
 # set up encrypted device
 echo "Running cryptsetup -q -d $keyfile luksFormat $enc"
 cryptsetup -q -d $keyfile luksFormat $enc
-if [ "$?" -eq "0" ]
+if [ $? -eq 0 ]
 then
     echo "luksFormat successfully called on device $enc"
 else
@@ -86,10 +93,10 @@ file -s $enc
 cryptsetup -d $keyfile luksOpen $enc encrypted
 
 # create filesystem
-echo "Creating ext3 fs on /dev/mapper/encrypted"
-mkfs.ext3 -q -m 0 /dev/mapper/encrypted
-echo "Creating ext3 fs on $raw"
-mkfs.ext3 -q -m 0 $raw
+echo "Creating $filesystem fs on /dev/mapper/encrypted"
+mkfs -t $filesystem -q -m 0 /dev/mapper/encrypted
+echo "Creating $filesystem fs on $raw"
+mkfs -t $filesystem -q -m 0 $raw
 
 # create mounting points
 mkdir -p /plain
@@ -115,7 +122,8 @@ fi
 # finally run the test and save the result
 echo "Running fio test..."
 # fio bench.fio | tee test-result.txt
-TEST_OUTPUT=${INSTANCE_TYPE}-${INSTANCE_ID}-`date +%m-%d-%y-%H:%M:%S`.out
+#TEST_OUTPUT=${INSTANCE_TYPE}-${INSTANCE_ID}-`date +%m-%d-%y-%H:%M:%S`.out
+TEST_OUTPUT="test-result.out"
 echo "Outputting to $TEST_OUTPUT"
 
 fio --output=$TEST_OUTPUT bench.fio

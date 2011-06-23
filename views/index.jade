@@ -3,7 +3,7 @@ h4 INSTRUCTION: Tweak the parameters below to load the corresponding fio test re
 
 p Common across all tests:
 ul
-    li AMI: Basic 32-bit Amazon Linux AMI
+    li AMI: Basic 32-bit/64-bit Amazon Linux AMI
     li Region: IAD
     li Encryption is done using dm-crypt/LUKS with default parameters (Cipher name: aes, Cipher mode: cbc-essiv:sha256, Hash spec: sha1)
     li The same fio job file is used across all tests (
@@ -21,6 +21,8 @@ form#form(method='post', action='q')
                     input(id='#{key}', type='radio', name='#{attribute.name}', value='#{key}')
                     label(for='#{key}') #{val}
 #result
+    h4 Test runs:
+    #test-runs
     h4 Summary:
     #summary
     table#summary-table

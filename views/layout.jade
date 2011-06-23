@@ -10,12 +10,59 @@ html
     script(type='text/javascript', src='/javascripts/jquery.form.js')
     script(type='text/javascript', src='/javascripts/jquery.styletable.js')
     script(type='text/javascript')
+        function clearSummaryTable() {
+            $('#summary-table tbody tr td').each(function(index) {
+                // Don't do anything for the first column
+                if (index % 7 == 0) {
+                    return;
+                }
+                $(this).text("");
+            });
+        }
+
         $(function() {
 
             var debug = false;
 
             // decorate the buttons
             $('.buttonset').buttonset();
+
+            // register the live events
+            $('#test-runs a').live('click', function() {
+                var file = $(this).text();
+                file = '/results/'+file;
+
+                $.get(file, function(content) {
+                    $('#test-output').text(content);
+                    // parse the content to populate the summary section
+                    var regex = /[READ:|WRITE:].*aggrb=(.*?),/g;
+                    var cells = [];
+                    var match;
+                    while (match = regex.exec(content)) {
+                    cells.push(match[1]);
+                    }
+                    $('#summary-table tbody tr td').each(function(index) {
+                        // Don't do anything for the first column
+                        if (index % 7 == 0) {
+                        return;
+                        }
+                        var text = cells.shift();
+                        // These columns are read/write so shift twice
+                        if (index % 7 == 3 || index % 7 == 6) {
+                        text += " / " + cells.shift();
+                        }
+                        $(this).text(text);
+                        });
+
+
+                }).error(function() {
+                    $('#test-output').text("No test result found for the above config (" + file + " returned a 404)");
+                    clearSummaryTable();
+                });
+
+                // Don't follow thru with the click
+                return false;
+            });
 
             // register the form
             var options = {
@@ -24,40 +71,19 @@ html
                     if (debug) {
                         $('#debug').append(JSON.stringify(response, null, '\t'));
                     }
-                    var file = response.file;
-                    $.get(file, function(content) {
-                        $('#test-output').text(content);
-                        // parse the content to populate the summary section
-                        var regex = /[READ:|WRITE:].*aggrb=(.*?),/g;
-                        var cells = [];
-                        var match;
-                        while (match = regex.exec(content)) {
-                            cells.push(match[1]);
-                        }
-                        $('#summary-table tbody tr td').each(function(index) {
-                            // Don't do anything for the first column
-                            if (index % 7 == 0) {
-                                return;
-                            }
-                            var text = cells.shift();
-                            // These columns are read/write so shift twice
-                            if (index % 7 == 3 || index % 7 == 6) {
-                                text += " / " + cells.shift();
-                            }
-                            $(this).text(text);
-                        });
+                    var files = response.files;
+                    // clear some sections
+                    $('#test-runs').text("");
+                    $('#test-output').text("");
+                    clearSummaryTable();
 
-
-                    }).error(function() {
-                        $('#test-output').text("No test result found for the above config (" + file + " returned a 404)");
-                        $('#summary-table tbody tr td').each(function(index) {
-                            // Don't do anything for the first column
-                            if (index % 7 == 0) {
-                                return;
-                            }
-                            $(this).text("");
+                    if (!files || files.length == 0) {
+                        $('#test-runs').text("No test runs found for the above config");
+                    } else {
+                        $.each(files, function(index, file){
+                            $('#test-runs').append("<a href='.'>"+file+"</a>");
                         });
-                    });
+                    }
                 }
             };
             $('#form').ajaxForm(options);

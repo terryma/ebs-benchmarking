@@ -29,9 +29,12 @@ def usage():
     sys.exit(1)
 
 # Supported instance types
-instanceTypes = {'m1.small': {'name':'m1.small', 'condensed':'m1small', 'ami':AMI_ID_32},
-                 'm1.large': {'name':'m1.large', 'condensed':'m1large', 'ami':AMI_ID_64}
-                }
+instanceTypes = {
+    'm1.small' : {'name':'m1.small' , 'condensed':'m1small' , 'ami':AMI_ID_32},
+    'm1.large' : {'name':'m1.large' , 'condensed':'m1large' , 'ami':AMI_ID_64},
+    'm1.xlarge': {'name':'m1.xlarge', 'condensed':'m1xlarge', 'ami':AMI_ID_64}
+}
+
 # Supported filesystems
 fileSystems = ['ext3', 'ext4']
 

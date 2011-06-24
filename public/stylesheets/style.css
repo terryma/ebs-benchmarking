@@ -23,3 +23,8 @@ form .field .field-label {
 .styleTable TD { font-weight: normal !important; padding: .4em; border-top-width: 0px !important; text-align: center;}
 .styleTable TH { text-align: center; padding: .4em 1em; font-weight: bold; font-size:14px; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);}
 .styleTable TD.first, .styleTable TH.first { border-left-width: 0px !important; }
+
+#graph {
+    width:600px;
+    height:300px;
+}

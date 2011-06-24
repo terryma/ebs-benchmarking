@@ -43,6 +43,10 @@ rpm -qa | grep $rpmforge > /dev/null && echo "RPMforge is already installed" || 
 echo "Checking fio..."
 yum list installed | grep "^fio" > /dev/null && echo "fio is already installed" || yum install --assumeyes fio
 
+# install xfs
+echo "Installing xfsprogs..."
+yum install --assumeyes xfsprogs
+
 # create a key file and populate it if not already exists
 echo "Checking encryption key..."
 keyfile=$HOME/.lukskey
@@ -94,9 +98,9 @@ cryptsetup -d $keyfile luksOpen $enc encrypted
 
 # create filesystem
 echo "Creating $filesystem fs on /dev/mapper/encrypted"
-mkfs -t $filesystem -q -m 0 /dev/mapper/encrypted
+mkfs -t $filesystem -q /dev/mapper/encrypted
 echo "Creating $filesystem fs on $raw"
-mkfs -t $filesystem -q -m 0 $raw
+mkfs -t $filesystem -q $raw
 
 # create mounting points
 mkdir -p /plain
@@ -127,6 +131,16 @@ TEST_OUTPUT="test-result.out"
 echo "Outputting to $TEST_OUTPUT"
 
 fio --output=$TEST_OUTPUT bench.fio
+
+# Clean up
+# unmount our stuff
+echo "Unmounting /plain and /encrypted..."
+umount -l /plain
+umount -l /encrypted
+
+# close our encrypted luks device
+echo "Closing existing LUKS device 'encrypted'"
+cryptsetup luksClose encrypted
 
 #.
 

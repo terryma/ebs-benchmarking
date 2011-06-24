@@ -6,10 +6,62 @@ html
     link(rel='stylesheet', href='/stylesheets/Aristo/jquery-ui-1.8.7.custom.css')
     script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js')
     script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js')
+    script(type='text/javascript', src='https://www.google.com/jsapi')
     script(type='text/javascript', src='/javascripts/json2.js')
+    script(type='text/javascript', src='/javascripts/jquery.flot.js')
     script(type='text/javascript', src='/javascripts/jquery.form.js')
     script(type='text/javascript', src='/javascripts/jquery.styletable.js')
     script(type='text/javascript')
+        // play with charts
+        /*google.load("visualization", "1", {packages: ["corechart"]});*/
+        //google.setOnLoadCallback(drawGraph);
+
+        // flot vars
+        var xaxis_p = [1, 4, 7, 8, 12, 15, 18, 19];
+        var xaxis_e = [2, 5, 9, 10,13, 16, 20, 21];
+        var xaxis_t = [2, 5, 9, 13, 16, 20];
+        var data_p = [], data_e = [];
+        var ticks_l = ["Seq Read", "Seq Write", "Seq R/W", "Rand Read", "Rand Write", "Rand R/W"];
+        var ticks = [];
+        for (var i = 0; i < ticks_l.length; i++) {
+            ticks.push([xaxis_t[i], ticks_l[i]]);
+        }
+        for (var i = 0; i < 8; i++) {
+            data_p.push([xaxis_p[i], 0]);
+            data_e.push([xaxis_e[i], 0]);
+        }
+
+        var data = [
+            {
+                label: "Plain",
+                data: data_p
+            },
+            {
+                label: "Encrypted",
+                data: data_e
+            }
+        ];
+
+        var options = { 
+            xaxis: {
+                       min: 0,
+                       max: 23,
+                       ticks: ticks
+                   },
+            yaxis: {
+                       min: 0,
+                       max: 50000,
+                       tickFormatter: function (v) { return v + " kbytes/s"; }
+                   },
+            bars: {
+                      show: true,
+                      barWidth: 1
+                  },
+        };
+
+
+
+
         function clearSummaryTable() {
             $('#summary-table tbody tr td').each(function(index) {
                 // Don't do anything for the first column
@@ -18,6 +70,41 @@ html
                 }
                 $(this).text("");
             });
+        }
+
+        function clearGraph() {
+            data_p = [];
+            data_e = [];
+            plot();
+        }
+
+        function drawGraph() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Time');
+            data.addColumn('number', 'encrypted');
+            data.addColumn('number', 'raw');
+            data.addRows(4);
+            data.setValue(0, 0, '2004');
+            data.setValue(0, 1, 1000);
+            data.setValue(0, 2, 400);
+            data.setValue(1, 0, '2005');
+            data.setValue(1, 1, 1000);
+            data.setValue(1, 2, 400);
+            data.setValue(2, 0, '2006');
+            data.setValue(2, 1, 1000);
+            data.setValue(2, 2, 400);
+            data.setValue(3, 0, '2007');
+            data.setValue(3, 1, 1000);
+            data.setValue(3, 2, 400);
+
+            var chart = new google.visualization.ColumnChart($('#graph')[0]);
+            chart.draw(data, {width:400, height:240, title:'Benchmark result'});
+        }
+        
+        function plot() {
+            data[0]['data'] = data_p;
+            data[1]['data'] = data_e;
+            $.plot($('#graph'), data, options);
         }
 
         $(function() {
@@ -35,26 +122,33 @@ html
                 $.get(file, function(content) {
                     $('#test-output').text(content);
                     // parse the content to populate the summary section
-                    var regex = /[READ:|WRITE:].*aggrb=(.*?),/g;
+                    var regex = /[READ:|WRITE:].*aggrb=(.*?)KB\\/s,/g;
                     var cells = [];
                     var match;
                     while (match = regex.exec(content)) {
-                    cells.push(match[1]);
+                        cells.push(match[1]);
                     }
+
+                    // Update the graph
+                    data_p = []; data_e = [];
+                    for (var i = 0; i < 8; i++) {
+                        data_p.push([xaxis_p[i], cells[i]]);
+                        data_e.push([xaxis_e[i], cells[i+8]]);
+                    }
+                    plot();
+
                     $('#summary-table tbody tr td').each(function(index) {
                         // Don't do anything for the first column
                         if (index % 7 == 0) {
-                        return;
+                            return;
                         }
-                        var text = cells.shift();
+                        var text = cells.shift() + " KB/s";
                         // These columns are read/write so shift twice
                         if (index % 7 == 3 || index % 7 == 6) {
-                        text += " / " + cells.shift();
+                            text += " / " + cells.shift() + " KB/s";
                         }
                         $(this).text(text);
-                        });
-
-
+                    });
                 }).error(function() {
                     $('#test-output').text("No test result found for the above config (" + file + " returned a 404)");
                     clearSummaryTable();
@@ -65,7 +159,7 @@ html
             });
 
             // register the form
-            var options = {
+            var formOptions = {
                 dataType: 'json',
                 success: function(response) {
                     if (debug) {
@@ -76,17 +170,19 @@ html
                     $('#test-runs').text("");
                     $('#test-output').text("");
                     clearSummaryTable();
+                    clearGraph();
 
                     if (!files || files.length == 0) {
                         $('#test-runs').text("No test runs found for the above config");
                     } else {
                         $.each(files, function(index, file){
-                            $('#test-runs').append("<a href='.'>"+file+"</a>");
+                            $('#test-runs').append("<li><a href='.'>"+file+"</a></li>");
                         });
+                        $('#test-runs').wrapInner('<ul>');
                     }
                 }
             };
-            $('#form').ajaxForm(options);
+            $('#form').ajaxForm(formOptions);
 
             // store all the radios 
             var radiosArr = [];
@@ -108,5 +204,8 @@ html
 
             // init the summary table
             $('#summary-table').styleTable();
+            
+            // plot using flot
+            plot();
         });
   body!= body

@@ -34,7 +34,7 @@ var attributes = [
     {name:'instance-type', label:'Instance Type', values:{m1small:'m1.small', m1large:'m1.large', m1xlarge:'m1.xlarge', c1xlarge:'c1.xlarge'}}, 
     {name:'file-system', label:'File System', values:{ext3:'ext3', ext4:'ext4', xfs:'xfs'}}, 
     {name:'mount-options', label:'Mount Options', values:{none:'none', noatime:'noatime'}}, 
-    {name:'storage-type', label:'Storage Type', values:{ebs:'ebs', euphemeral:'euphemeral'}},
+    {name:'storage-type', label:'Storage Type', values:{ebs:'ebs', ephemeral:'ephemeral'}},
     {name:'instance-tenancy', label:'Instance Tenancy', values:{dedicated:'dedicated', default:'default'}},
     {name:'encryption-layer', label:'Encryption Layer', values:{domU:'domU', dom0:'dom0'}}
 ];

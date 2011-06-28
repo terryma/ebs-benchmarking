@@ -107,6 +107,13 @@ html
             $.plot($('#graph'), data, options);
         }
 
+        function formatDate(date) {
+            return pad(date.getMonth()+1, 2) + "/" + pad(date.getDate(), 2) + "/" + date.getFullYear() + " " + pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2) + ":" + pad(date.getSeconds(), 2);
+        }
+        function pad(v) {
+            return v < 10 ? "0"+v : v;
+        }
+
         $(function() {
 
             var debug = false;
@@ -115,7 +122,7 @@ html
             $('.buttonset').buttonset();
 
             // register the live events
-            $('#test-runs a').live('click', function() {
+            $('#test-runs-table a').live('click', function() {
                 var file = $(this).text();
                 file = '/results/'+file;
 
@@ -174,11 +181,14 @@ html
 
                     if (!files || files.length == 0) {
                         $('#test-runs').text("No test runs found for the above config");
+                        $('#test-runs-table').hide();
                     } else {
+                        $('#test-runs-table').show().find('tbody tr').remove();
                         $.each(files, function(index, file){
-                            $('#test-runs').append("<li><a href='.'>"+file+"</a></li>");
+                            var time = new Date(parseInt(/.*-(.*)\.txt/.exec(file)[1])*1000);
+                            $('#test-runs-table tbody').append("<tr><td><a href='.'>" + file +"</a></td><td>"+formatDate(time)+"</td></tr>");
                         });
-                        $('#test-runs').wrapInner('<ul>');
+                        $('#test-runs-table').styleTable();
                     }
                 }
             };
@@ -204,6 +214,9 @@ html
 
             // init the summary table
             $('#summary-table').styleTable();
+
+            // init the test run table
+            $('#test-runs-table').styleTable();
             
             // plot using flot
             plot();

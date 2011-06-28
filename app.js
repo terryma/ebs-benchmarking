@@ -46,6 +46,7 @@ app.get('/', function(req, res){
     });
 });
 
+var fileRegex = /.*-(.*)\.txt/;
 app.post('/q', function(req, res) {
     console.log(req.body);
     var arr = [];
@@ -60,6 +61,10 @@ app.post('/q', function(req, res) {
             return e.indexOf(prefix) == 0;
         });
         console.log(files)
+        // sort the files based on execution time
+        files.sort(function(l, r) {
+            return parseInt(fileRegex.exec(r)[1]) - parseInt(fileRegex.exec(l)[1]); 
+        });
         res.send({req:req.body, files:files});
     });
 });

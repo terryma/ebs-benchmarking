@@ -8,7 +8,7 @@ do
     do
         for t in "${tenancies[@]}"
         do
-            python create-instance.py -i $i -f $f -t $t > ../logs/$i-$f-$t.out 
+            python create-instance.py -i $i -f $f -t $t > ../logs/$i-$f-$t.out
         done
     done
 done

@@ -7,6 +7,7 @@ var express = require('express');
 var fs = require('fs');
 
 var app = module.exports = express.createServer();
+var port;
 
 // Configuration
 
@@ -22,10 +23,12 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  port = 8888;
 });
 
 app.configure('production', function(){
   app.use(express.errorHandler()); 
+  port = 8080;
 });
 
 // Routes
@@ -69,5 +72,5 @@ app.post('/q', function(req, res) {
     });
 });
 
-app.listen(8080);
+app.listen(port);
 console.log("Express server listening on port %d", app.address().port);

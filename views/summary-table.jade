@@ -1,0 +1,26 @@
+table.summary(id='#{id}')
+script(type='text/javascript')
+    $(function(){
+        // This is a gigantic pain, what's better? 
+        var $t = $('##{id}');
+        var html = '<thead><tr>';
+        $.each(headers, function(i, v) {
+            html += '<th>'+v+'</th>';
+        });
+        html += '</tr></thead>';
+        html += '<tbody>';
+        $.each(ioPatterns, function(i, v) {
+            html += '<tr>';
+            $.each(headers, function(j) {
+                html += '<td>';
+                if (j == 0) {
+                    html += v;
+                }5
+                html += '</td>';
+            });
+            html += '</tr>';
+        });
+        html += '</tbody>';
+        $t.append(html);
+        $t.styleTable();
+    });

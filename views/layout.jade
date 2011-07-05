@@ -11,62 +11,16 @@ html
     script(type='text/javascript', src='/javascripts/jquery.flot.js')
     script(type='text/javascript', src='/javascripts/jquery.form.js')
     script(type='text/javascript', src='/javascripts/jquery.styletable.js')
+    script(type='text/javascript', src='/javascripts/jquery.myGraph.js')
     script(type='text/javascript')
-        // flot vars
-        // x-axis location for plain result
-        var xaxis_p = [1, 4, 7, 8, 12, 15, 18, 19];
-        // x-axis location for encrypted result
-        var xaxis_e = [2, 5, 9, 10,13, 16, 20, 21];
-        // x-axis location for the ticks
-        var xaxis_t = [2, 5, 9, 13, 16, 20];
-        var data_p = [], data_e = [];
-        var ticks_l = ["Seq Read", "Seq Write", "Seq R/W", "Rand Read", "Rand Write", "Rand R/W"];
-        var ticks = [];
-        // initialize the ticks
-        for (var i = 0; i < ticks_l.length; i++) {
-            ticks.push([xaxis_t[i], ticks_l[i]]);
-        }
-        // initialize with 0's
-        for (var i = 0; i < 8; i++) {
-            data_p.push([xaxis_p[i], 0]);
-            data_e.push([xaxis_e[i], 0]);
-        }
 
-        var data = [
-            {
-                label: "Plain",
-                data: data_p
-            },
-            {
-                label: "Encrypted",
-                data: data_e
-            }
-        ];
+        var headers = ['Pattern', 'Plain', 'Encrypted'];
+        var ioPatterns = ['Seq Read', 'Seq Write', 'Seq R/W', 'Rand Read', 'Rand Write', 'Rand R/W'];
 
-        var options = { 
-            xaxis: {
-                        min: 0,
-                        max: 23,
-                        ticks: ticks
-                   },
-            yaxis: {
-                        min: 0,
-                        max: 50000,
-                        tickFormatter: function (v) { return v + " kbytes/s"; }
-                   },
-            bars: {
-                        show: true,
-                        barWidth: 1
-                  }
-        };
-
-
-
-
-        function clearSummaryTable() {
-            $('#summary-table tbody tr td').each(function(index) {
+        function clearTables() {
+            $('.summary tbody tr td').each(function(index) {
                 // Don't do anything for the first column
-                if (index % 7 == 0) {
+                if (index % (headers.length) == 0) {
                     return;
                 }
                 $(this).text("");
@@ -74,15 +28,10 @@ html
         }
 
         function clearGraph() {
-            data_p = [];
-            data_e = [];
-            plot();
-        }
-        
-        function plot() {
-            data[0]['data'] = data_p;
-            data[1]['data'] = data_e;
-            $.plot($('#graph'), data, options);
+            for (var i in idToGraphs) {
+                console.log(i);
+                idToGraphs[i].myGraph('clear');
+            };
         }
 
         function formatDate(date) {
@@ -90,6 +39,90 @@ html
         }
         function pad(v) {
             return v < 10 ? "0"+v : v;
+        }
+
+        var latencyGraph = $('#latency-graph').myGraph({
+            xaxis: {
+                    // x-axis location for plain result
+                    p:[1, 4, 7, 8, 12, 15, 18, 19],
+                    e:[2, 5, 9, 10,13, 16, 20, 21],
+                    t:[2, 5, 9, 13, 16, 20],
+                    max:23
+                   },
+            yaxis: {
+                        tickFormatter: function(v) {return v + " kbytes/s"},
+                        max: 50000
+                   }
+        });
+
+        var cpuUsrGraph = $('#cpu-usr-graph').myGraph({
+            xaxis: {
+                    // x-axis location for plain and encrypted result
+                    p:[1, 4, 7, 10, 13, 16, 19],
+                    e:[2, 5, 8, 11, 14, 17, 20],
+                    // x-axis location for the ticks
+                    t:[2, 5, 8, 11, 14, 17],
+                    max:19
+                   },
+            yaxis: {
+                        tickFormatter: function(v) {return v + "%"},
+                        max: 10
+                   }
+        });
+
+        var cpuSysGraph = $('#cpu-sys-graph').myGraph({
+            xaxis: {
+                    // x-axis location for plain and encrypted result
+                    p:[1, 4, 7, 10, 13, 16, 19],
+                    e:[2, 5, 8, 11, 14, 17, 20],
+                    // x-axis location for the ticks
+                    t:[2, 5, 8, 11, 14, 17],
+                    max:19
+                   },
+            yaxis: {
+                        tickFormatter: function(v) {return v + "%"},
+                        max: 50
+                   }
+        });
+
+        var idToGraphs = {
+            'latency': latencyGraph,
+            'cpu-usr': cpuUsrGraph,
+            'cpu-sys': cpuSysGraph
+        };
+
+
+        function updateSection(params) {
+            var regex = params.regex;
+            var cells = [];
+            var match;
+            while (match = regex.exec(params.content)) {
+                cells.push(match[1]);
+            }
+            var matches = cells.length; // This value should be either 16 or 12, depending on whether there're two values for Read/Write
+            
+            console.log(cells);
+
+            idToGraphs[params.id].myGraph('update', cells).myGraph('plot');
+
+            var $tbody = $('#'+params.id+'-table tbody');
+            $('tr :nth-child(2)', $tbody).each(function(index) {
+                console.log(index);
+                var text = cells.shift() + params.unit;
+                if (matches == 16 && index % 3 == 2) {
+                    // These columns are read/write so shift twice
+                    text += " / " + cells.shift() + params.unit;
+                }
+                $(this).text(text);
+            });
+            $('tr :nth-child(3)', $tbody).each(function(index) {
+                var text = cells.shift() + params.unit;
+                if (matches == 16 && index % 3 == 2) {
+                    // These columns are read/write so shift twice
+                    text += " / " + cells.shift() + params.unit;
+                }
+                $(this).text(text);
+            });  
         }
 
         $(function() {
@@ -106,37 +139,24 @@ html
 
                 $.get(file, function(content) {
                     $('#test-output').text(content);
-                    // parse the content to populate the summary section
-                    var regex = /[READ:|WRITE:].*aggrb=(.*?)KB\\/s,/g;
-                    var cells = [];
-                    var match;
-                    while (match = regex.exec(content)) {
-                        cells.push(match[1]);
-                    }
-
-                    // Update the graph
-                    data_p = []; data_e = [];
-                    for (var i = 0; i < 8; i++) {
-                        data_p.push([xaxis_p[i], cells[i]]);
-                        data_e.push([xaxis_e[i], cells[i+8]]);
-                    }
-                    plot();
-
-                    $('#summary-table tbody tr td').each(function(index) {
-                        // Don't do anything for the first column
-                        if (index % 7 == 0) {
-                            return;
-                        }
-                        var text = cells.shift() + " KB/s";
-                        // These columns are read/write so shift twice
-                        if (index % 7 == 3 || index % 7 == 6) {
-                            text += " / " + cells.shift() + " KB/s";
-                        }
-                        $(this).text(text);
+                    updateSection({
+                        content: content,
+                        id:'latency',
+                        regex: /[READ:|WRITE:].*aggrb=(.*?)KB\\/s,/g,
+                        unit: ' KB/s'
                     });
-                }).error(function() {
-                    $('#test-output').text("No test result found for the above config (" + file + " returned a 404)");
-                    clearSummaryTable();
+                    updateSection({
+                        content: content,
+                        id:'cpu-usr',
+                        regex: /cpu.*usr=(.*?)%,/g,
+                        unit: '%'
+                    });
+                    updateSection({
+                        content: content,
+                        id:'cpu-sys',
+                        regex: /cpu.*sys=(.*?)%,/g,
+                        unit: '%'
+                    });
                 });
 
                 // Don't follow thru with the click
@@ -154,7 +174,7 @@ html
                     // clear some sections
                     $('#test-runs').text("");
                     $('#test-output').text("");
-                    clearSummaryTable();
+                    clearTables();
                     clearGraph();
 
                     if (!files || files.length == 0) {
@@ -190,13 +210,7 @@ html
             // do an initial submit
             $('#form').submit();
 
-            // init the summary table
-            $('#summary-table').styleTable();
-
             // init the test run table
             $('#test-runs-table').styleTable();
-            
-            // plot using flot
-            plot();
         });
   body!= body

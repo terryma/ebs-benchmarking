@@ -28,36 +28,27 @@ form#form(method='post', action='q')
             th Test output
             th Execution time
         tbody
-    h4 Summary:
-    #summary
-    table#summary-table
-        thead: tr
-            th Encryption
-            th Seq Read
-            th Seq Write
-            th Seq Read/Write
-            th Rand Read
-            th Rand Write
-            th Rand Read/Write
-        tbody
-            tr
-                td Plain
-                td 
-                td 
-                td 
-                td 
-                td 
-                td 
-            tr
-                td Encrypted
-                td 
-                td 
-                td 
-                td 
-                td 
-                td 
-    h4 Graph:
-    #graph
+    h4 IO Latency:
+    table.section
+        tr
+            td
+                .graph#latency-graph 
+            td
+                !=partial('summary-table', {id:'latency-table'})
+    h4 CPU User Time:
+    table.section
+        tr
+            td
+                .graph#cpu-usr-graph
+            td
+                !=partial('summary-table', {id:'cpu-usr-table'})
+    h4 CPU System Time:
+    table.section
+        tr
+            td
+                .graph#cpu-sys-graph
+            td
+                !=partial('summary-table', {id:'cpu-sys-table'})
     h4 Test output:
     pre#test-output
     // p Debug:

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # This script will create the EC2 instance and bootstrap it to kick off the setup script to execute the fio tests
 
 import sys
@@ -160,16 +162,19 @@ else :
 print "Instance %s is associated with public ip: %s" % (instance.id, public_ip)
 
 
+BASEDIR = os.path.dirname(os.path.realpath(__file__))
 
 keyfile = "/home/zhenchma/EC2/keys/terry-key.pem"
-script = "./setup.sh"
+script = "%s/setup.sh" % (BASEDIR)
+script_remotedir = "/home/ec2-user"
+script_remote = "%s/setup.sh" % (script_remotedir)
 # Try to connect 10 times
 MAX_CONNECT_ATTEMPTS = 10
 connectAttempts = 0
 
 print "Trying to scp %s to instance at %s..." % (script, public_ip)
 while True:
-    retcode = call(["scp", "-q", "-o", "ConnectTimeout=5", "-i", keyfile, script, "ec2-user@%s:/home/ec2-user" % public_ip])
+    retcode = call(["scp", "-q", "-o", "ConnectTimeout=5", "-i", keyfile, script, "ec2-user@%s:%s" % (public_ip, script_remotedir)])
     if retcode == 0:
         print "Successfully copied script to remote host"
         break
@@ -179,8 +184,8 @@ while True:
     if connectAttempts > MAX_CONNECT_ATTEMPTS:
         sys.exit("Reached max connect attempts. Aborting...")
 
-print "Trying to execute %s on instance at %s..." % (script, public_ip)
-command = 'sudo %s -d /dev/xvdc -f %s' % (script, fileSystem)
+print "Trying to execute %s on instance at %s..." % (script_remote, public_ip)
+command = 'sudo %s -d /dev/xvdc -f %s' % (script_remote, fileSystem)
 retcode = call(["ssh", "-t", "-i", keyfile, "ec2-user@%s" % public_ip, command])
 
 # TODO These parameters need to become user input later
@@ -193,7 +198,7 @@ fileName+='.txt'
 print fileName
 
 print "Trying to retrieve test result file from instance..."
-retcode = call(["scp", "-q", "-o", "ConnectTimeout=5", "-i", keyfile, "ec2-user@%s:/home/ec2-user/test-result.out" % public_ip, "./results/%s" % fileName])
+retcode = call(["scp", "-q", "-o", "ConnectTimeout=5", "-i", keyfile, "ec2-user@%s:/home/ec2-user/test-result.out" % public_ip, "%s/results/%s" % (BASEDIR, fileName)])
 if retcode == 0:
     print "Successfully retrieved test result from instance"
 

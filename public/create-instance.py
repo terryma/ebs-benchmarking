@@ -186,7 +186,12 @@ while True:
 
 print "Trying to execute %s on instance at %s..." % (script_remote, public_ip)
 command = 'sudo %s -d /dev/xvdc -f %s' % (script_remote, fileSystem)
-retcode = call(["ssh", "-t", "-i", keyfile, "ec2-user@%s" % public_ip, command])
+print "Calling ssh -t -i %s ec2-user@%s %s" % (keyfile, public_ip, command)
+retcode = call(["ssh", "-t", "-t", "-i", keyfile, "ec2-user@%s" % public_ip, command])
+if retcode == 0:
+    print "Successfully invoked remote script"
+else:
+    print "Remote script execution failed with retcode %s"%retcode
 
 # TODO These parameters need to become user input later
 _mountOption='none'
@@ -201,7 +206,8 @@ print "Trying to retrieve test result file from instance..."
 retcode = call(["scp", "-q", "-o", "ConnectTimeout=5", "-i", keyfile, "ec2-user@%s:/home/ec2-user/test-result.out" % public_ip, "%s/results/%s" % (BASEDIR, fileName)])
 if retcode == 0:
     print "Successfully retrieved test result from instance"
-
+else:
+    print "Failed to retrieve test result from instance, retcode=%s"%retcode
 
 # Clean up...
 if (tenancy == 'dedicated'):
@@ -216,8 +222,10 @@ print "Terminating instance %s" % instance.id
 ec2 = boto.connect_ec2()
 res = ec2.terminate_instances(instance_ids=[instance.id])
 print res
+print "###########################################"
+print "########        ALL DONE!          ########"
+print "###########################################"
 
 
-print "Done!"
 
 

@@ -69,6 +69,13 @@ umount -l /encrypted
 echo "Closing existing LUKS device 'encrypted'"
 cryptsetup luksClose encrypted
 
+# Warm the volume with dd
+echo "Running dd to warm the volume"
+echo "dd if=$device of=/dev/null..."
+dd if=$device of=/dev/null
+echo "dd if=/dev/zero of=$device..."
+dd if=/dev/zero of=$device
+
 # set up two partitions, one encrypted and one raw
 echo "Setting up two 130 cylinder partitions on $device, WIPING everything on there"
 {

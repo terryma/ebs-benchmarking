@@ -3,7 +3,7 @@ ioengine=libaio
 iodepth=8
 direct=1
 invalidate=1
-size=128m
+size=512m
 directory=/plain
 
 [pla-seq-read]

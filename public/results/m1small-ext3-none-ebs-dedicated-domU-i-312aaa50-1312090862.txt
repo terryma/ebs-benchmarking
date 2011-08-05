@@ -1,0 +1,255 @@
+pla-seq-read: (g=0): rw=read, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+pla-seq-write: (g=1): rw=write, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+pla-seq-rw: (g=2): rw=rw, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+pla-rand-read: (g=3): rw=randread, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+pla-rand-write: (g=4): rw=randwrite, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+pla-rand-rw: (g=5): rw=randrw, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-seq-read: (g=6): rw=read, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-seq-write: (g=7): rw=write, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-seq-rw: (g=8): rw=rw, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-rand-read: (g=9): rw=randread, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-rand-write: (g=10): rw=randwrite, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+enc-rand-rw: (g=11): rw=randrw, bs=4K-4K/4K-4K, ioengine=libaio, iodepth=8
+fio 1.57
+Starting 12 processes
+pla-seq-read: Laying out IO file(s) (1 file(s) / 128MB)
+pla-seq-write: Laying out IO file(s) (1 file(s) / 128MB)
+pla-seq-rw: Laying out IO file(s) (1 file(s) / 128MB)
+pla-rand-read: Laying out IO file(s) (1 file(s) / 128MB)
+pla-rand-write: Laying out IO file(s) (1 file(s) / 128MB)
+pla-rand-rw: Laying out IO file(s) (1 file(s) / 128MB)
+enc-seq-read: Laying out IO file(s) (1 file(s) / 128MB)
+enc-seq-write: Laying out IO file(s) (1 file(s) / 128MB)
+enc-seq-rw: Laying out IO file(s) (1 file(s) / 128MB)
+enc-rand-read: Laying out IO file(s) (1 file(s) / 128MB)
+enc-rand-write: Laying out IO file(s) (1 file(s) / 128MB)
+enc-rand-rw: Laying out IO file(s) (1 file(s) / 128MB)
+
+pla-seq-read: (groupid=0, jobs=1): err= 0: pid=1135
+  read : io=131072KB, bw=23036KB/s, iops=5758 , runt=  5690msec
+    slat (usec): min=17 , max=60345 , avg=32.23, stdev=743.69
+    clat (usec): min=248 , max=64546 , avg=1353.47, stdev=4338.20
+     lat (usec): min=686 , max=64566 , avg=1386.49, stdev=4399.97
+    bw (KB/s) : min=20227, max=25312, per=99.38%, avg=22893.27, stdev=1776.55
+  cpu          : usr=2.60%, sys=40.57%, ctx=14115, majf=0, minf=29
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=32768/0/0, short=0/0/0
+     lat (usec): 250=0.01%, 750=3.91%, 1000=62.49%
+     lat (msec): 2=29.76%, 4=3.05%, 10=0.26%, 100=0.52%
+pla-seq-write: (groupid=1, jobs=1): err= 0: pid=1136
+  write: io=131072KB, bw=6029.4KB/s, iops=1507 , runt= 21739msec
+    slat (usec): min=18 , max=197 , avg=27.92, stdev= 4.72
+    clat (msec): min=1 , max=143 , avg= 5.25, stdev= 3.97
+     lat (msec): min=1 , max=143 , avg= 5.28, stdev= 3.97
+    bw (KB/s) : min= 4696, max= 6632, per=100.36%, avg=6050.98, stdev=456.29
+  cpu          : usr=0.99%, sys=11.06%, ctx=32692, majf=0, minf=21
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=0/32768/0, short=0/0/0
+
+     lat (msec): 2=0.03%, 4=0.20%, 10=99.16%, 20=0.29%, 50=0.07%
+     lat (msec): 100=0.22%, 250=0.02%
+pla-seq-rw: (groupid=2, jobs=1): err= 0: pid=1138
+  read : io=65760KB, bw=5643.7KB/s, iops=1410 , runt= 11652msec
+    slat (usec): min=18 , max=234 , avg=25.90, stdev= 6.32
+    clat (usec): min=715 , max=247223 , avg=2694.98, stdev=3332.97
+     lat (usec): min=737 , max=247254 , avg=2721.73, stdev=3333.16
+    bw (KB/s) : min= 2872, max= 6496, per=100.15%, avg=5651.70, stdev=735.29
+  write: io=65312KB, bw=5605.3KB/s, iops=1401 , runt= 11652msec
+    slat (usec): min=17 , max=2381 , avg=26.86, stdev=28.24
+    clat (msec): min=1 , max=247 , avg= 2.93, stdev= 5.15
+     lat (msec): min=1 , max=247 , avg= 2.96, stdev= 5.15
+    bw (KB/s) : min= 3072, max= 6136, per=100.03%, avg=5606.61, stdev=624.77
+  cpu          : usr=1.61%, sys=18.09%, ctx=25402, majf=0, minf=21
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=16440/16328/0, short=0/0/0
+     lat (usec): 750=0.02%, 1000=0.34%
+     lat (msec): 2=22.24%, 4=70.68%, 10=6.55%, 20=0.03%, 50=0.02%
+     lat (msec): 100=0.10%, 250=0.02%
+pla-rand-read: (groupid=3, jobs=1): err= 0: pid=1139
+  read : io=131072KB, bw=22238KB/s, iops=5559 , runt=  5894msec
+    slat (usec): min=18 , max=60293 , avg=40.67, stdev=997.45
+    clat (usec): min=259 , max=61555 , avg=1394.43, stdev=4928.86
+     lat (usec): min=676 , max=61576 , avg=1435.92, stdev=5026.30
+    bw (KB/s) : min=19952, max=25688, per=100.45%, avg=22337.09, stdev=1981.82
+  cpu          : usr=1.90%, sys=45.21%, ctx=14717, majf=0, minf=29
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=32768/0/0, short=0/0/0
+     lat (usec): 500=0.01%, 750=4.64%, 1000=60.21%
+     lat (msec): 2=33.91%, 4=0.47%, 10=0.06%, 20=0.02%, 100=0.68%
+pla-rand-write: (groupid=4, jobs=1): err= 0: pid=1140
+  write: io=131072KB, bw=6061.8KB/s, iops=1515 , runt= 21623msec
+    slat (usec): min=19 , max=60202 , avg=30.31, stdev=332.45
+    clat (msec): min=1 , max=66 , avg= 5.24, stdev= 2.58
+     lat (msec): min=1 , max=66 , avg= 5.27, stdev= 2.60
+    bw (KB/s) : min= 4400, max= 6656, per=100.13%, avg=6068.79, stdev=569.25
+  cpu          : usr=0.52%, sys=11.51%, ctx=32709, majf=0, minf=20
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=0/32768/0, short=0/0/0
+
+     lat (msec): 2=0.03%, 4=0.16%, 10=99.21%, 20=0.39%, 50=0.05%
+     lat (msec): 100=0.17%
+pla-rand-rw: (groupid=5, jobs=1): err= 0: pid=1141
+  read : io=65108KB, bw=5146.5KB/s, iops=1286 , runt= 12651msec
+    slat (usec): min=18 , max=4882 , avg=25.95, stdev=38.58
+    clat (usec): min=258 , max=202332 , avg=2545.13, stdev=3104.92
+     lat (usec): min=708 , max=202354 , avg=2571.91, stdev=3104.92
+    bw (KB/s) : min= 2800, max= 6496, per=100.16%, avg=5154.40, stdev=777.33
+  write: io=65964KB, bw=5214.2KB/s, iops=1303 , runt= 12651msec
+    slat (usec): min=18 , max=3133 , avg=26.47, stdev=34.11
+    clat (msec): min=1 , max=203 , avg= 3.56, stdev= 4.44
+     lat (msec): min=1 , max=203 , avg= 3.59, stdev= 4.44
+    bw (KB/s) : min= 3040, max= 6288, per=100.14%, avg=5221.16, stdev=696.14
+  cpu          : usr=1.20%, sys=17.08%, ctx=26348, majf=0, minf=20
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=16277/16491/0, short=0/0/0
+     lat (usec): 500=0.01%, 750=0.04%, 1000=1.56%
+     lat (msec): 2=20.90%, 4=60.01%, 10=17.27%, 20=0.07%, 50=0.05%
+     lat (msec): 100=0.07%, 250=0.02%
+enc-seq-read: (groupid=6, jobs=1): err= 0: pid=1142
+  read : io=131072KB, bw=9126.1KB/s, iops=2281 , runt= 14361msec
+    slat (usec): min=15 , max=90952 , avg=67.68, stdev=1811.56
+    clat (usec): min=348 , max=95031 , avg=3425.18, stdev=11596.29
+     lat (usec): min=882 , max=95051 , avg=3493.68, stdev=11728.76
+    bw (KB/s) : min= 7791, max=10656, per=99.92%, avg=9118.41, stdev=784.34
+  cpu          : usr=3.90%, sys=34.23%, ctx=34473, majf=0, minf=29
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=32768/0/0, short=0/0/0
+     lat (usec): 500=0.02%, 750=0.05%, 1000=0.20%
+     lat (msec): 2=93.09%, 4=3.73%, 10=0.21%, 100=2.69%
+enc-seq-write: (groupid=7, jobs=1): err= 0: pid=1143
+  write: io=131072KB, bw=6366.8KB/s, iops=1591 , runt= 20587msec
+    slat (usec): min=15 , max=286 , avg=26.25, stdev= 6.47
+    clat (msec): min=1 , max=208 , avg= 4.97, stdev= 3.65
+     lat (msec): min=1 , max=208 , avg= 5.00, stdev= 3.65
+    bw (KB/s) : min= 4088, max= 7288, per=100.10%, avg=6372.49, stdev=516.63
+  cpu          : usr=1.57%, sys=10.82%, ctx=31064, majf=0, minf=20
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=0/32768/0, short=0/0/0
+
+     lat (msec): 2=0.01%, 4=7.35%, 10=92.16%, 20=0.23%, 50=0.18%
+     lat (msec): 100=0.05%, 250=0.02%
+enc-seq-rw: (groupid=8, jobs=1): err= 0: pid=1144
+  read : io=65464KB, bw=4068.9KB/s, iops=1017 , runt= 16089msec
+    slat (usec): min=15 , max=60783 , avg=41.99, stdev=1057.57
+    clat (usec): min=786 , max=64498 , avg=3626.93, stdev=8651.96
+     lat (usec): min=994 , max=64519 , avg=3669.70, stdev=8711.64
+    bw (KB/s) : min= 3560, max= 4806, per=100.08%, avg=4071.13, stdev=284.00
+  write: io=65608KB, bw=4077.9KB/s, iops=1019 , runt= 16089msec
+    slat (usec): min=15 , max=60863 , avg=37.40, stdev=821.61
+    clat (usec): min=862 , max=66108 , avg=4137.10, stdev=9045.62
+     lat (msec): min=1 , max=66 , avg= 4.18, stdev= 9.09
+    bw (KB/s) : min= 3728, max= 4656, per=100.16%, avg=4083.65, stdev=223.47
+  cpu          : usr=2.24%, sys=20.31%, ctx=29814, majf=0, minf=21
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=16366/16402/0, short=0/0/0
+     lat (usec): 1000=0.02%
+     lat (msec): 2=24.87%, 4=69.42%, 10=2.93%, 20=0.47%, 50=0.07%
+     lat (msec): 100=2.22%
+enc-rand-read: (groupid=9, jobs=1): err= 0: pid=1145
+  read : io=131072KB, bw=9327.7KB/s, iops=2331 , runt= 14052msec
+    slat (usec): min=15 , max=120984 , avg=45.87, stdev=1275.54
+    clat (usec): min=361 , max=122240 , avg=3378.68, stdev=12436.39
+     lat (usec): min=878 , max=122260 , avg=3425.35, stdev=12497.42
+    bw (KB/s) : min= 7710, max= 9992, per=99.52%, avg=9281.88, stdev=545.75
+  cpu          : usr=3.73%, sys=32.91%, ctx=34257, majf=0, minf=29
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=32768/0/0, short=0/0/0
+     lat (usec): 500=0.01%, 750=0.08%, 1000=0.24%
+     lat (msec): 2=95.37%, 4=1.81%, 100=2.27%, 250=0.22%
+enc-rand-write: (groupid=10, jobs=1): err= 0: pid=1146
+  write: io=131072KB, bw=6248.1KB/s, iops=1562 , runt= 20975msec
+    slat (usec): min=16 , max=205 , avg=27.95, stdev= 5.83
+    clat (msec): min=1 , max=245 , avg= 5.09, stdev= 4.17
+     lat (msec): min=1 , max=245 , avg= 5.12, stdev= 4.17
+    bw (KB/s) : min= 3384, max= 6696, per=99.97%, avg=6246.02, stdev=548.46
+  cpu          : usr=1.47%, sys=10.68%, ctx=32738, majf=0, minf=20
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=0/32768/0, short=0/0/0
+
+     lat (msec): 2=0.01%, 4=0.09%, 10=98.97%, 20=0.47%, 50=0.42%
+     lat (msec): 100=0.02%, 250=0.02%
+enc-rand-rw: (groupid=11, jobs=1): err= 0: pid=1147
+  read : io=64648KB, bw=3826.3KB/s, iops=956 , runt= 16896msec
+    slat (usec): min=15 , max=60528 , avg=28.46, stdev=478.13
+    clat (usec): min=114 , max=204790 , avg=3294.45, stdev=9003.61
+     lat (usec): min=917 , max=204818 , avg=3323.72, stdev=9015.17
+    bw (KB/s) : min= 2400, max= 4344, per=99.86%, avg=3820.82, stdev=418.99
+  write: io=66424KB, bw=3931.4KB/s, iops=982 , runt= 16896msec
+    slat (usec): min=16 , max=60780 , avg=32.69, stdev=666.72
+    clat (usec): min=991 , max=206363 , avg=4860.47, stdev=10725.16
+     lat (msec): min=1 , max=206 , avg= 4.89, stdev=10.74
+    bw (KB/s) : min= 2226, max= 4560, per=99.91%, avg=3927.42, stdev=445.02
+  cpu          : usr=2.37%, sys=15.27%, ctx=31062, majf=0, minf=20
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=100.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued r/w/d: total=16162/16606/0, short=0/0/0
+     lat (usec): 250=0.01%, 1000=0.05%
+     lat (msec): 2=27.16%, 4=63.70%, 10=6.35%, 20=0.36%, 50=0.09%
+     lat (msec): 100=2.23%, 250=0.05%
+
+Run status group 0 (all jobs):
+   READ: io=131072KB, aggrb=23035KB/s, minb=23588KB/s, maxb=23588KB/s, mint=5690msec, maxt=5690msec
+
+Run status group 1 (all jobs):
+  WRITE: io=131072KB, aggrb=6029KB/s, minb=6174KB/s, maxb=6174KB/s, mint=21739msec, maxt=21739msec
+
+Run status group 2 (all jobs):
+   READ: io=65760KB, aggrb=5643KB/s, minb=5779KB/s, maxb=5779KB/s, mint=11652msec, maxt=11652msec
+  WRITE: io=65312KB, aggrb=5605KB/s, minb=5739KB/s, maxb=5739KB/s, mint=11652msec, maxt=11652msec
+
+Run status group 3 (all jobs):
+   READ: io=131072KB, aggrb=22238KB/s, minb=22771KB/s, maxb=22771KB/s, mint=5894msec, maxt=5894msec
+
+Run status group 4 (all jobs):
+  WRITE: io=131072KB, aggrb=6061KB/s, minb=6207KB/s, maxb=6207KB/s, mint=21623msec, maxt=21623msec
+
+Run status group 5 (all jobs):
+   READ: io=65108KB, aggrb=5146KB/s, minb=5269KB/s, maxb=5269KB/s, mint=12651msec, maxt=12651msec
+  WRITE: io=65964KB, aggrb=5214KB/s, minb=5339KB/s, maxb=5339KB/s, mint=12651msec, maxt=12651msec
+
+Run status group 6 (all jobs):
+   READ: io=131072KB, aggrb=9126KB/s, minb=9345KB/s, maxb=9345KB/s, mint=14361msec, maxt=14361msec
+
+Run status group 7 (all jobs):
+  WRITE: io=131072KB, aggrb=6366KB/s, minb=6519KB/s, maxb=6519KB/s, mint=20587msec, maxt=20587msec
+
+Run status group 8 (all jobs):
+   READ: io=65464KB, aggrb=4068KB/s, minb=4166KB/s, maxb=4166KB/s, mint=16089msec, maxt=16089msec
+  WRITE: io=65608KB, aggrb=4077KB/s, minb=4175KB/s, maxb=4175KB/s, mint=16089msec, maxt=16089msec
+
+Run status group 9 (all jobs):
+   READ: io=131072KB, aggrb=9327KB/s, minb=9551KB/s, maxb=9551KB/s, mint=14052msec, maxt=14052msec
+
+Run status group 10 (all jobs):
+  WRITE: io=131072KB, aggrb=6248KB/s, minb=6398KB/s, maxb=6398KB/s, mint=20975msec, maxt=20975msec
+
+Run status group 11 (all jobs):
+   READ: io=64648KB, aggrb=3826KB/s, minb=3918KB/s, maxb=3918KB/s, mint=16896msec, maxt=16896msec
+  WRITE: io=66424KB, aggrb=3931KB/s, minb=4025KB/s, maxb=4025KB/s, mint=16896msec, maxt=16896msec
+
+Disk stats (read/write):
+  xvdc: ios=98179/178092, merge=0/510965, ticks=165016/5661820, in_queue=5826684, util=92.47%
+  dm-0: ios=97936/361038, merge=0/0, ticks=344448/838147888, in_queue=838492656, util=69.65%

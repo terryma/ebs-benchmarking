@@ -28,7 +28,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler()); 
-  port = 8080;
+  port = 80;
 });
 
 // Routes

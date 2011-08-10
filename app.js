@@ -42,7 +42,7 @@ var attributes = [
     {name:'encryption-layer', label:'Encryption Layer', values:{domU:'domU', dom0:'dom0'}}
 ];
 
-app.get('/', function(req, res){
+app.get('/ebs-benchmarking/', function(req, res){
     res.render('index', {
         title: 'EBS Benchmarking',
         attributes: attributes
@@ -50,7 +50,7 @@ app.get('/', function(req, res){
 });
 
 var fileRegex = /.*-(.*)\.txt/;
-app.post('/q', function(req, res) {
+app.post('/ebs-benchmarking/q', function(req, res) {
     console.log(req.body);
     var arr = [];
     for (var i in req.body) {
